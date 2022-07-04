@@ -7,6 +7,10 @@ contract ERC20 {
   string public name;
   string public symbol;
 
+  event Transfer(address indexed from, address indexed to, uint256 value);
+
+  event Approval(address indexed owner, address indexed sender, uint256 value);
+
   // mapping(address => uint256) private balances;
 
   // function balanceOf(address owner) public view returns(uint256) {
@@ -70,19 +74,23 @@ contract ERC20 {
 
     allowance[sender][msg.sender] = currentAllowance - amount;
 
+    emit Approval(sender, recipient, amount);
+
     return _transfer(sender, recipient, amount);
   }
 
 
   // owner to allow other address to spend the token on their behalf
   function approve(address spender, uint256 amount) external returns(bool) {
-     require(
+    require(
       spender != address(0),
       "ERC20: approve to the zero address");
 
-     allowance[msg.sender][spender] = amount;
+    allowance[msg.sender][spender] = amount;
 
-     return true;
+    emit Approval(msg.sender, spender, amount);
+
+    return true;
   }
 
   function _transfer(address sender, address recipient, uint256 amount) private returns (bool){
@@ -97,6 +105,8 @@ contract ERC20 {
 
     balanceOf[recipient] += amount;
 
+    emit Transfer(sender, recipient, amount);
+
     return true;
   }
 
@@ -106,6 +116,9 @@ contract ERC20 {
     totalSupply += amount;
 
     balanceOf[to] += amount;
+
+    emit Transfer(address(0), to, amount);
+
   }
 
 }
