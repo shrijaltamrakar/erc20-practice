@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.15;
+pragma solidity ^0.8.0;
 
 contract ERC20 {
   uint256 public totalSupply;
@@ -28,6 +28,8 @@ contract ERC20 {
   constructor(string memory _name, string memory _symbol) {
     name = _name;
     symbol = _symbol;
+
+    _mint(msg.sender, 100e18); //100,000,000,000
   }
 
   function decimals() external pure returns (uint8) {
@@ -51,7 +53,7 @@ contract ERC20 {
   //   return true;
   // }
 
-  function tranfer(address recipient, uint256 amount) external returns (bool){
+  function transfer(address recipient, uint256 amount) external returns (bool){
     return _transfer(msg.sender, recipient, amount);
   }
 
@@ -96,6 +98,14 @@ contract ERC20 {
     balanceOf[recipient] += amount;
 
     return true;
+  }
+
+  function _mint(address to, uint256 amount) internal{
+    require(to != address(0), "ERC20: Mint to the zero address");
+
+    totalSupply += amount;
+
+    balanceOf[to] += amount;
   }
 
 }
